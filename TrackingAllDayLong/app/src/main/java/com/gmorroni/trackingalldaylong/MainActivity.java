@@ -6,6 +6,8 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -16,6 +18,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class MainActivity extends AppCompatActivity implements
@@ -49,12 +53,33 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location != null) {
-            ((TextView) findViewById(R.id.textViewLatitude)).setText(String.valueOf(location.getLatitude()));
-            ((TextView) findViewById(R.id.textViewLongitude)).setText(String.valueOf(location.getLongitude()));
-        }
+        saveLocation(location);
         final LocationRequest mLocationRequest = new LocationRequest();
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    }
+
+    public void saveLocation(Location location){
+        if (location != null) {
+            ((TextView)findViewById(R.id.textViewLatitude)).setText(String.valueOf(location.getLatitude()));
+            ((TextView)findViewById(R.id.textViewLongitude)).setText(String.valueOf(location.getLongitude()));
+            Context context = this;
+            SharedPreferences sharedPref = context.getSharedPreferences("lat-long", Context.MODE_PRIVATE);
+
+            SharedPreferences.Editor editor = sharedPref.edit();
+            Set<String> latitude = new HashSet<>();
+            Set<String> longitude = new HashSet<>();
+
+            latitude = sharedPref.getStringSet("latitude", latitude);
+            longitude = sharedPref.getStringSet("longitude", longitude);
+
+            latitude.add(String.valueOf(location.getLatitude()));
+            editor.putStringSet("latitude", latitude);
+
+            longitude.add(String.valueOf(location.getLongitude()));
+            editor.putStringSet("longitude", longitude);
+
+            editor.commit();
+        }
     }
 
     public void clicked(View v){
@@ -83,10 +108,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-        if (location != null) {
-            ((TextView)findViewById(R.id.textViewLatitude)).setText(String.valueOf(location.getLatitude()));
-            ((TextView)findViewById(R.id.textViewLongitude)).setText(String.valueOf(location.getLongitude()));
-        }
+        saveLocation(location);
     }
 
 }
