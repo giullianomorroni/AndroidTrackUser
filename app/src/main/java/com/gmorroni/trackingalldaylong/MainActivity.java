@@ -15,10 +15,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -39,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements
                     .addApi(LocationServices.API)
                     .build();
         }
+
     }
 
     @Override
@@ -66,19 +72,35 @@ public class MainActivity extends AppCompatActivity implements
             SharedPreferences sharedPref = context.getSharedPreferences("lat-long", Context.MODE_PRIVATE);
 
             SharedPreferences.Editor editor = sharedPref.edit();
-            Set<String> latitude = new HashSet<>();
-            Set<String> longitude = new HashSet<>();
+            Set<String> values = new HashSet();
 
-            latitude = sharedPref.getStringSet("latitude", latitude);
-            longitude = sharedPref.getStringSet("longitude", longitude);
+            values = sharedPref.getStringSet("values", values);
 
-            latitude.add(String.valueOf(location.getLatitude()));
-            editor.putStringSet("latitude", latitude);
+            Calendar instance = Calendar.getInstance();
+            instance.setTimeInMillis(location.getTime());
 
-            longitude.add(String.valueOf(location.getLongitude()));
-            editor.putStringSet("longitude", longitude);
+            String result =
+            String.valueOf(location.getLatitude()) +" - "+
+            String.valueOf(location.getLongitude()) +" - Ac:"+
+            String.valueOf(location.getAccuracy()) +" Dt:"+
+            String.valueOf(instance.get(Calendar.DAY_OF_MONTH))+"/"+
+            String.valueOf(instance.get(Calendar.MONTH))+"/"+
+            String.valueOf(instance.get(Calendar.YEAR))+" - "+
+            String.valueOf(instance.get(Calendar.HOUR_OF_DAY))+":"+
+            String.valueOf(instance.get(Calendar.MINUTE));
 
+            values.add(result);
+            editor.putStringSet("values", values);
             editor.commit();
+
+            ArrayList<String> items = new ArrayList();
+            for (String r : values){
+                items.add(r);
+            }
+
+            ListView listView = (ListView) findViewById(R.id.listViewLocations);
+            ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.fragment_item, items);
+            listView.setAdapter(arrayAdapter);
         }
     }
 
