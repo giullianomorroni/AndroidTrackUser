@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -146,6 +147,11 @@ public class MainActivity extends AppCompatActivity {
     private void writeToFile(){
         FileOutputStream outputStream;
         try {
+            if(values.size() > 150) {
+                Collections.reverse(values);
+                values = values.subList(0, 150);
+            }
+
             outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
             outputStream.write(("").getBytes());
 
