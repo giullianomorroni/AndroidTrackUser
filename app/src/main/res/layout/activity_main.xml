@@ -35,13 +35,6 @@
                 tools:layout_editor_absoluteX="16dp"
                 tools:layout_editor_absoluteY="96dp" />
 
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="clicked"
-                android:text="Button" />
-
         </LinearLayout>
 
         <LinearLayout
