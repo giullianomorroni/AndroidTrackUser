@@ -44,41 +44,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (intent == null) {
-            MyLocationListener listener = new MyLocationListener(this);
             MyLocationCallback callback = new MyLocationCallback(this);
-
-            /*
-            if (mGoogleApiClient == null) {
-                mGoogleApiClient = new GoogleApiClient.Builder(this)
-                        .addConnectionCallbacks(listener)
-                        .addOnConnectionFailedListener(listener)
-                        .addApi(LocationServices.API)
-                        .build();
-            }*/
-
             LocationServices.getFusedLocationProviderClient(this).requestLocationUpdates(locationRequest(), callback , null);
-
-            //mGoogleApiClient.connect();
-            //intent = new Intent("com.gmorroni.trackingalldaylong.LOCATION");
-            //PendingIntent pendIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            //LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest(), pendIntent);
         }
     }
 
     private LocationRequest locationRequest() {
         LocationRequest mLocationRequest = new LocationRequest();
 
-        // Sets the desired interval for active location updates. This interval is
-        // inexact. You may not receive updates at all if no location sources are available, or
-        // you may receive them slower than requested. You may also receive updates faster than
-        // requested if other applications are requesting location at a faster interval.
-
-        mLocationRequest.setInterval(600000);
+        mLocationRequest.setInterval(1800000);
         //mLocationRequest.setInterval(20000);
 
-        // Sets the fastest rate for active location updates. This interval is exact, and your
-        // application will never receive updates faster than this value.
-        mLocationRequest.setFastestInterval(300000);
+        mLocationRequest.setFastestInterval(600000);
         //mLocationRequest.setFastestInterval(5000);
 
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -87,14 +64,17 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onStart() {
         super.onStart();
-        //mGoogleApiClient.connect();
     }
 
     protected void onStop() {
         super.onStop();
-        //mGoogleApiClient.disconnect();
     }
 
+    public void saveLocation(Location location){
+        List<Location> locations = new ArrayList();
+        locations.add(location);
+        saveLocation(locations);
+    }
     public void saveLocation(List<Location> locations){
         if (locations != null) {
 
@@ -122,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
             writeToFile();
             ListView listView = (ListView) findViewById(R.id.listViewLocations);
+            Collections.reverse(values);
             ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.fragment_item, values);
             listView.setAdapter(arrayAdapter);
         }
@@ -147,9 +128,8 @@ public class MainActivity extends AppCompatActivity {
     private void writeToFile(){
         FileOutputStream outputStream;
         try {
-            if(values.size() > 150) {
-                Collections.reverse(values);
-                values = values.subList(0, 150);
+            if(values.size() > 200) {
+                values = values.subList(0, 200);
             }
 
             outputStream = openFileOutput(filename, Context.MODE_PRIVATE);

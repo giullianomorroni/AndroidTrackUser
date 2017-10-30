@@ -21,8 +21,8 @@ public class MyLocationCallback extends LocationCallback {
     @Override
     public void onLocationResult(LocationResult locationResult) {
         super.onLocationResult(locationResult);
-        this.mainActivity.saveLocation(locationResult.getLocations());
-        //this.mainActivity.saveLocation(locationResult.getLastLocation());
+        //this.mainActivity.saveLocation(locationResult.getLocations());
+        this.mainActivity.saveLocation(locationResult.getLastLocation());
     }
 
     @Override
